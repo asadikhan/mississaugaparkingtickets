@@ -1,70 +1,68 @@
-# Getting Started with Create React App
+# City of Mississauga Parking Tickets Analytics
+This is a ReactJS project that uses publicly available data from City of Mississauga to build a few different insight pages. It uses [Chart.JS](https://www.chartjs.org/), [Google Maps](https://www.google.com/maps) , [Heatmaps](https://developers.google.com/maps/documentation/javascript/heatmaplayer), [Bootstrap](https://react-bootstrap.github.io/), Axios and [Papa Parse](https://www.papaparse.com/) to name a few of the libraries. This site only uses built in React state and does not rely on Redux or other state stores. 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Navigation
+The site uses the left one fourth of the bootstrap grid for navigation, and the remaining for content. When you initially launch the site you are greeted by a simplistic navigation on the left and a simple message on the right asking the user to choose an action. 
 
-## Available Scripts
+![Getting Started](./images/01-LandingPage.png)
 
-In the project directory, you can run:
+## Tickets by Time of Day
+If the user clicks on the first link, a small alert appears underneath the navigation area with some overview information; and TicketsByTimeOfDay component is loaded in the content area. The first time this link is loaded, you may momentarily (1-2 seconds) see a "Loading" message as it reads the ParkingTickets data files, strips the time of day the ticket was issued from all the data files (2016-2021) and aggregates them. It then displays a line chart visualization that uses chart.js to show the number of tickets issued, and plots them against the time of day on the x-axis. 
 
-### `npm start`
+![Time by Time of Day](./images/02-TicketsByTimeOfDay.PNG)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The chart is fully interactive and you can click on the years in the header to animatedly remove data from the chart. 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![Time by Time of Day Animated](./images/03-TicketsByTimeOfDayAnimation.gif)
 
-### `npm test`
+## Tickets by Location Google Maps HeatMap
+If the user clicks on the second link, a small alert appears underneath the navigtion area with some overview information; and TicketsByLocationHeatMap component is loaded in the content area. This component is centred on Mississauga, and shows a heat map of the locations where most number of tickets were issued based on the 2021 data. Obviously it is a fully functional Google Maps control and the user can zoom in to investigate areas upclose. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+![Tickets by Location Heatmap](./images/04-TicketsByLocationHeatMap.PNG)
 
-### `npm run build`
+## How were street addresses converted to geo co-ordinates
+Geocoding is the process of converting street address to lat and long co-ordinates. There are a number of services including Google, OpenStreetMaps, etc. that offer this service via their respective API but they can get expensive. Google charges about $4 for 1000 queries, and we have about 180,000 records in a single year's data. A total of 6 years of data would roughly cost around $4,000. For demo purposes, I took only 2021 data and ran it through an open source and free service called Nominatim (https://nominatim.org/). Nominatim allows you to geocode your street addresses free of cost, but they do have some limitations particularly around throughput. It only allows one request per second, and repeated requests of the same address can be blocked. I wrote a quick utility that you can find under helper/Geocoder.js that uses Axios to fetch geocoded data for a subset of street addresses, one per second, and then saves it in another file. I then used this file in my HeatMap sample. 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+One last thing of note is that because I was working with a fairly small geocoded data set, I pass it in as inidivual points to create the heat map. If I were doing this for production, it is better to consolidate points from the same lat and long and pass them with a higher weight to get better performance. This way instead of Google Map having to render a 1000 individual points, will only render one point with a higher weight thus saving processing.  
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Analytics Dashboard
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+If the user clicks on the final Analytics Dashboard link, the user is presented with a sophisticated dashboard showcasing various chart.js visualizations. This dashboard uses mock data and isn't tied to actual data from the city as the purpose was to showcase react, bootstrap and chart.js integration. Again all of the visualizations are fully interactive as shown below. 
 
-### `npm run eject`
+![Dashboard Animation](./images/05-DashboardAnimation.gif)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## React Component Hierarchy
+Index.js loads a single Layout.js component. 
+Layout.js uses bootstrap to setup 3 column wide left nav (LeftNav.js), and 9 column wide content area. Depending on what option is clicked, layout.js loads appropriate components in the content area. These are one of TicketsByTimeOfDay.js, TicketsByLocationHeatMapContainer.js, or Dashboard.js. 
+Dashboard.js loads bunch of other Dashboard sub components e.g. DashboardInfo, DashboardLineChart, DashboardBubbleChart, etc. 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## How To Use
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To clone and run this application, you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+# Clone this repository
+$ git clone https://github.com/asadikhan/mississaugaparkingtickets
 
-## Learn More
+# Go into the repository
+$ cd mississaugaparkingtickets
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Install dependencies
+$ npm install
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# Run the app
+$ npm start
+```
 
-### Code Splitting
+In order for the Google HeatMap to appear, you need to create a [Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key) and update the apiKey in the LocationHeatMap.js as shown below. 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+export default GoogleApiWrapper({
+  apiKey: "INSERT-YOUR-API-KEY-HERE",
+  libraries: ["visualization"]
+})(LocationHeatMap);
+```
 
-### Analyzing the Bundle Size
+## Credits
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- The Parking Tickets data used in this project is publicly available from City of Mississauga at https://data.mississauga.ca/search?collection=Dataset&q=Transportation

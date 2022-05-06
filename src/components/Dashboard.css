@@ -1,0 +1,23 @@
+.dashboardCell {
+    border:1px solid #778899;
+}
+.infoTile {
+    text-align: center;
+    display: grid;
+    align-items: center;
+    background-color: lightgrey;
+    padding: 10px;
+    background-image: linear-gradient(to bottom, rgb(201, 201, 201) 0%, rgb(230, 230, 230) 100%), linear-gradient(to bottom, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 100%);
+    background-clip: content-box, padding-box;
+}
+.centered {
+    text-align: center;
+    display: grid;
+    align-items: center;
+    padding: 10px;
+}
+h6 {
+    text-align: center;
+    vertical-align: text-bottom;
+    color: #778899;
+}

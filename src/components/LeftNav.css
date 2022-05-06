@@ -1,0 +1,9 @@
+.center {
+    text-align: center;
+  }
+  .btn-nav {
+    background-color: white;
+    color: gray;
+    border-color: gray;
+    border-width: thin;
+  }
